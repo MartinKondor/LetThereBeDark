@@ -5,6 +5,7 @@
  * - Get the alpha values too.
  * - Set body and html color attributes too.
  */
+console.log('Let there be dark!');
 
 /**
  * Prase hex string to be a 3 element length array.
@@ -45,13 +46,14 @@ function rgbToArray(rgbStr) {
  * @param {3 / 4 element length rgb color array} color 
  */
 function nightify(color) {
+    var luminance = parseInt((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3)
     
-    // console.log((color[0] + color[1] + color[2]) / 3)
+    if (luminance > 42.5) {
+        color[0] /= 3;
+        color[1] /= 3;
+        color[2] /= 3;
+    }
 
-    color[0] = 0;
-    color[1] = 0;
-    color[2] = 0;
-    
     return color;
 }
 
@@ -220,7 +222,9 @@ var VALID_CSS_COLORS = {
 var elements = document.body.getElementsByTagName('*');
 
 for (var element of elements) {
-    
+
+    var colorIsSet = false;
+
     // Get every style attribute of each element
     for (var cssProperty of element.style) {
         var value = element.style[cssProperty];
@@ -228,6 +232,9 @@ for (var element of elements) {
         // Check if the element's color can be changed
         if (COLORED_ELEMENTS.indexOf(cssProperty) == -1) {
             continue;   
+        }
+        else {
+            colorIsSet = true;
         }
 
         // Determine color type
@@ -242,10 +249,22 @@ for (var element of elements) {
         }
 
         var rgbArray = nightify(value);
-        element.style[cssProperty] = `rgb(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]})`;
-
+        if (cssProperty == 'color') {
+            element.style[cssProperty] = `rgb(245, 245, 245)`;
+        }
+        else {
+            element.style[cssProperty] = `rgb(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]})`;
+        }
     }
+
+    if (!colorIsSet) {
+        element.style['background'] = 'rgb(0, 0, 0)';
+        element.style['color'] = 'rgb(255, 255, 255)';
+    }
+
 }
+
+document.body.style['background'] = 'rgb(0, 0, 0)';
 
 /*
 // Set the body background color too
