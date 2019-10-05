@@ -1,10 +1,5 @@
 (function () {
 'use strict';
-/**
- * TODO: 
- * - Get the alpha values too.
- * - Set body and html color attributes too.
- */
 console.log('Let there be dark!');
 
 /**
@@ -20,22 +15,28 @@ function hexToRgb(hexStr) {
  * Prase rgbStr to be a 3 element length array.
  * @param {string} rgbStr
  */
-function rgbToArray(rgbStr) {
+function rgbToArray(rgbStr, hasAlpha=false) {
     var colors = ['', '', ''];
     var currentIndex = 0;
+
+    if (hasAlpha) {
+        colors = ['', '', '', ''];
+    }
 
     for (var i = 0; i < rgbStr.length; i++) {
         if (rgbStr[i] == ',') {
             currentIndex++;
             continue;
         }
-        if (isNaN(rgbStr[i]) || /^\s+$/.test(rgbStr[i])) continue;
+        if (rgbStr[i] != '.' && (isNaN(rgbStr[i]) || /^\s+$/.test(rgbStr[i]))) {
+            continue;
+        }
 
         colors[currentIndex] += rgbStr[i];
     }
 
     for (var i = 0; i < colors.length; i++) {
-        colors[i] = parseInt(colors[i]);
+        colors[i] = parseFloat(colors[i]);
     }
 
     return colors;
@@ -45,24 +46,54 @@ function rgbToArray(rgbStr) {
  * Make a darker color from the given one.
  * @param {3 / 4 element length rgb color array} color 
  */
-function nightify(color) {
-    var luminance = parseInt((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3)
+function nightify(color, hasAlpha=false) {
+    var luminance = 85;
+    if (hasAlpha) {
+        luminance = color[3] * parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
+    }
+    else {
+        luminance = parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
+    }
     
     if (luminance > 42.5) {
-        color[0] /= 3;
-        color[1] /= 3;
-        color[2] /= 3;
+        color[0] *= 0.25;
+        color[1] *= 0.25;
+        color[2] *= 0.25;
     }
 
     return color;
 }
 
+/**
+ * Sets image to be darker.
+ * @param {DOM image tagNamed element} element
+ */
+function nightifyImage(element) {
+    // element.style['background'] = '#000';
+    // element.style['opacity'] = '0.75';
 
-// Colored elements that are checked and changed on loading the page
-var COLORED_ELEMENTS = [
+    element.style['filter'] = 'brightness(90%)';
+}
+
+
+// Color properties that are checked and changed on loading the page
+var COLOR_PROPERTIES = [
     'color',
     'background-color',
     'background'
+];
+
+var TEXT_TAGS = [
+    'p',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    // 'i',
+    'strong',
+    'a'
 ];
 
 // The object of valid css colors and their hex value
@@ -219,26 +250,36 @@ var VALID_CSS_COLORS = {
 
 
 // Get every element from the DOM
-var elements = document.body.getElementsByTagName('*');
+for (var element of document.body.getElementsByTagName('*')) {
 
-for (var element of elements) {
+    var isElementDarkened = false;
 
-    var colorIsSet = false;
+    if (element.tagName.toLowerCase() == 'img') {
+        nightifyImage(element);
+        continue;
+    }
 
     // Get every style attribute of each element
     for (var cssProperty of element.style) {
-        var value = element.style[cssProperty];
 
         // Check if the element's color can be changed
-        if (COLORED_ELEMENTS.indexOf(cssProperty) == -1) {
+        if (COLOR_PROPERTIES.indexOf(cssProperty) == -1) {
             continue;   
         }
-        else {
-            colorIsSet = true;
+        else if (cssProperty == 'color') {  // Set every text to white
+            element.style[cssProperty] = `rgb(255, 255, 255)`;
+            continue; 
         }
 
+        var hasAlpha = false;
+        var value = element.style[cssProperty];
+
         // Determine color type
-        if (value.substring(0, 3) == 'rgb') {
+        if (value.substring(0, 4) == 'rgba') {
+            hasAlpha = true;
+            value = rgbToArray(value, true);
+        }
+        else if (value.substring(0, 3) == 'rgb') {
             value = rgbToArray(value);
         }
         else if (value[0] == '#') {
@@ -248,23 +289,48 @@ for (var element of elements) {
             value = hexToRgb(VALID_CSS_COLORS[value.toLowerCase()]);
         }
 
-        var rgbArray = nightify(value);
-        if (cssProperty == 'color') {
-            element.style[cssProperty] = `rgb(245, 245, 245)`;
+        // Nightify the color, and set the css property for this color
+        var rgbArray = nightify(value, hasAlpha);
+        
+        if (hasAlpha) {
+            element.style[cssProperty] = `rgba(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]}, ${rgbArray[3]})`;
         }
         else {
             element.style[cssProperty] = `rgb(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]})`;
         }
+        isElementDarkened = true;
+
     }
 
-    if (!colorIsSet) {
-        element.style['background'] = 'rgb(0, 0, 0)';
-        element.style['color'] = 'rgb(255, 255, 255)';
+    // Darken the not darkened element according to it's tag name
+    if (!isElementDarkened) {
+        var elementTagName = element.tagName.toLowerCase();
+
+        if (TEXT_TAGS.indexOf(elementTagName) != -1) {
+            element.style['color'] = 'rgb(255, 255, 255)';
+        }
+        else if (elementTagName == 'div') {
+            element.style['background-color'] = 'rgb(0, 0, 0)';
+            element.style['color'] = 'rgb(255, 255, 255)';
+        }
     }
 
 }
 
-document.body.style['background'] = 'rgb(0, 0, 0)';
+// Set a darker body background
+// Determine if the body background is an image or not
+document.body.style['color'] = 'rgb(255, 255, 255)';
+
+if (window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none') {
+    document.body.style['background-color'] = 'rgb(0, 0, 0)';
+
+    // TODO
+    document.body.style['background'] = 'rgb(0, 0, 0)';
+}
+else {
+    document.body.style['background-color'] = 'rgb(0, 0, 0)';
+    document.body.style['background'] = 'rgb(0, 0, 0)';
+}
 
 /*
 // Set the body background color too
@@ -286,3 +352,4 @@ document.body.style.background = `rgb(${bodyColor[0]}, ${bodyColor[1]}, ${bodyCo
 */
 
 })();
+    

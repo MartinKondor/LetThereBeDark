@@ -21,6 +21,5 @@ for (var element of document.getElementsByClassName('test-text')) {
     element.style = 'padding: 10px 20px 10px 20px;';
 }
 
-
 })();
     
