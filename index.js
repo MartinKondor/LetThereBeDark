@@ -1,4 +1,4 @@
-(function () {
+function letThereBeDark() {
 'use strict';
 console.log('Let there be dark!');
 
@@ -28,6 +28,9 @@ function rgbToArray(rgbStr, hasAlpha=false) {
             currentIndex++;
             continue;
         }
+        if (rgbStr[i] == ')') {
+            break;
+        }
         if (rgbStr[i] != '.' && (isNaN(rgbStr[i]) || /^\s+$/.test(rgbStr[i]))) {
             continue;
         }
@@ -44,9 +47,13 @@ function rgbToArray(rgbStr, hasAlpha=false) {
 
 /**
  * Make a darker color from the given one.
- * @param {3 / 4 element length rgb color array} color 
+ * @param {3 / 4 element length rgb color array} color
  */
-function nightify(color, hasAlpha=false) {
+function nightify(color, hasAlpha=true) {
+    if (color == '') {
+        return '';
+    }
+
     var luminance = 85;
     if (hasAlpha) {
         luminance = color[3] * parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
@@ -75,25 +82,142 @@ function nightifyImage(element) {
     element.style['filter'] = 'brightness(90%)';
 }
 
+/**
+ * Make a lighter color from the given one.
+ * @param {3 / 4 element length rgb color array} color
+ */
+function lightify(color, hasAlpha=true) {
+    if (color == '') {
+        return '';
+    }
+
+    var luminance = 85;
+    if (hasAlpha) {
+        luminance = color[3] * parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
+    }
+    else {
+        luminance = parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
+    }
+    
+    if (luminance <= 42.5) {
+        color[0] *= 1.25;
+        color[1] *= 1.25;
+        color[2] *= 1.25;
+    }
+
+    for (var i = 0; i < color.length; i++) {
+        if (color[i] > 255) {
+            color[i] = 255;
+        }
+    }
+
+    return color;
+}
+
+/**
+ * Converts string color to [r, g, b, a] array
+* @param {valid css color} color
+ */
+function getRgba(color) {
+    if (color == '') {
+        return '';
+    }
+
+    if (color.substring(0, 4) == 'rgba') {
+        color = rgbToArray(color, true);
+    }
+    else if (color.substring(0, 3) == 'rgb') {
+        color = rgbToArray(color, false);
+    }
+    else if (color[0] == '#') {
+        color = hexToRgb(color);
+    }
+    else if (color.toLowerCase() in VALID_CSS_COLORS) {
+        color = hexToRgb(VALID_CSS_COLORS[color.toLowerCase()]);
+    }
+    else {
+        var tmpColor = color.toLowerCase().split(' ')[0];
+        if (tmpColor in VALID_CSS_COLORS) {
+            color = hexToRgb(VALID_CSS_COLORS[tmpColor]);
+        }
+    }
+
+    if (color.length == 3) {
+        color.push(1.0);
+    }
+    return color;
+}
+
+/**
+ * Convert color array to valid css string.
+ * @param {[r, g, b, a] array} color
+ */
+function rgbToString(color) {
+    if (color == '') {
+        return '';
+    }
+    return `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`;
+}
+
 
 // Color properties that are checked and changed on loading the page
 var COLOR_PROPERTIES = [
-    'color',
-    'background-color',
-    'background'
+    //'color',
+    //'background-color',
+    //'background',
+    'border-color',
+    'border-top-color',
+    'border-right-color',
+    'border-bottom-color',
+    'border-left-color',
+    'border'
 ];
 
 var TEXT_TAGS = [
     'p',
+    'a',
     'h1',
     'h2',
     'h3',
     'h4',
     'h5',
     'h6',
-    // 'i',
+    'i',
     'strong',
-    'a'
+    'td',
+];
+
+var CONTAINER_TAGS = [
+    'td',
+    'p',
+    'a',
+    'span',
+    'form',
+    'div',
+    'nav',
+    'header',
+    'footer',
+    'aside',
+    'main',
+    'ul',
+    'ol',
+    'tbody',
+    'thead',
+    'rhead',
+    'rbody',
+    'tr',
+    'details',
+    'summary',
+    'center',
+    'code',
+    'pre',
+    'section'
+];
+
+var FORM_TAGS = [
+    'input',
+    'button',
+    'textarea'
 ];
 
 // The object of valid css colors and their hex value
@@ -246,75 +370,29 @@ var VALID_CSS_COLORS = {
     'whitesmoke': '#F5F5F5',
     'yellow': '#FFFF00',
     'yellowgreen': '#9ACD32',
+    'transparent': '#000000'
 };
 
 
-// Get every element from the DOM
-for (var element of document.body.getElementsByTagName('*')) {
+// Set all element's colors
+for (var element of document.getElementsByTagName('*')) {
+    element.style['color'] = rgbToString(lightify(getRgba(element.style['color']))) || 'rgb(255, 255, 255)';
 
-    var isElementDarkened = false;
+    var newBg = rgbToString(nightify(getRgba(element.style['background'])));
+    var newBgColor = rgbToString(nightify(getRgba(element.style['background-color'])));
+    element.style['background'] = newBg || newBgColor || 'rgb(0, 0, 0)';
+    element.style['background-color'] = newBgColor || newBg || 'rgb(0, 0, 0)';
+    
+    element.style['border-top-color'] = rgbToString(nightify(getRgba(element.style['border-top-color']))) || 'rgb(0, 0, 0)';
+    element.style['border-right-color'] = rgbToString(nightify(getRgba(element.style['border-right-color']))) || 'rgb(0, 0, 0)';
+    element.style['border-bottom-color'] = rgbToString(nightify(getRgba(element.style['border-bottom-color']))) || 'rgb(0, 0, 0)';
+    element.style['border-left-color'] = rgbToString(nightify(getRgba(element.style['border-left-color']))) || 'rgb(0, 0, 0)';
+    element.style['border-color'] = rgbToString(nightify(getRgba(element.style['border-color']))) || 'rgb(0, 0, 0)';
+    element.style['border'] = rgbToString(nightify(getRgba(element.style['border']))) || 'rgb(0, 0, 0)';
+}
 
-    if (element.tagName.toLowerCase() == 'img') {
-        nightifyImage(element);
-        continue;
-    }
-
-    // Get every style attribute of each element
-    for (var cssProperty of element.style) {
-
-        // Check if the element's color can be changed
-        if (COLOR_PROPERTIES.indexOf(cssProperty) == -1) {
-            continue;   
-        }
-        else if (cssProperty == 'color') {  // Set every text to white
-            element.style[cssProperty] = `rgb(255, 255, 255)`;
-            continue; 
-        }
-
-        var hasAlpha = false;
-        var value = element.style[cssProperty];
-
-        // Determine color type
-        if (value.substring(0, 4) == 'rgba') {
-            hasAlpha = true;
-            value = rgbToArray(value, true);
-        }
-        else if (value.substring(0, 3) == 'rgb') {
-            value = rgbToArray(value);
-        }
-        else if (value[0] == '#') {
-            value = hexToRgb(value);
-        }
-        else if (value.toLowerCase() in VALID_CSS_COLORS) {
-            value = hexToRgb(VALID_CSS_COLORS[value.toLowerCase()]);
-        }
-
-        // Nightify the color, and set the css property for this color
-        var rgbArray = nightify(value, hasAlpha);
-        
-        if (hasAlpha) {
-            element.style[cssProperty] = `rgba(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]}, ${rgbArray[3]})`;
-        }
-        else {
-            element.style[cssProperty] = `rgb(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]})`;
-        }
-        isElementDarkened = true;
-
-    }
-
-    // Darken the not darkened element according to it's tag name
-    if (!isElementDarkened) {
-        var elementTagName = element.tagName.toLowerCase();
-
-        if (TEXT_TAGS.indexOf(elementTagName) != -1) {
-            element.style['color'] = 'rgb(255, 255, 255)';
-        }
-        else if (elementTagName == 'div') {
-            element.style['background-color'] = 'rgb(0, 0, 0)';
-            element.style['color'] = 'rgb(255, 255, 255)';
-        }
-    }
-
+for (var imgElement of document.getElementsByTagName('img')) {
+    nightifyImage(imgElement);
 }
 
 // Set a darker body background
@@ -332,24 +410,5 @@ else {
     document.body.style['background'] = 'rgb(0, 0, 0)';
 }
 
-/*
-// Set the body background color too
-var bodyColor = document.body.style.background;
-
-if (bodyColor == '') {
-    bodyColor = 'rgb(255,255,255)';
-}
-else if (bodyColor.substring(0, 3) == 'rgb') {
-    bodyColor = rgbToArray(bodyColor);
-}
-else if (bodyColor[0] == '#') {
-    bodyColor = hexToRgb(bodyColor);
-}
-
-bodyColor = nightify(rgbToArray(bodyColor));
-console.log(`rgb(${bodyColor[0]}, ${bodyColor[1]}, ${bodyColor[2]});`);
-document.body.style.background = `rgb(${bodyColor[0]}, ${bodyColor[1]}, ${bodyColor[2]});`;
-*/
-
-})();
-    
+}letThereBeDark();
+document.onchange = 'letThereBeDark()';

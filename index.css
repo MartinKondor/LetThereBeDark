@@ -1,0 +1,60 @@
+html,
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+i,
+strong,
+td,
+a,
+a:hover,
+a:link,
+a:visited,
+a:active,
+a:target,
+a:focus,
+a::after,
+a::before,
+a:not([href]),
+
+td,
+p,
+a,
+span,
+form,
+div,
+nav,
+header,
+footer,
+aside,
+main,
+ul,
+ol,
+tbody,
+thead,
+tr,
+details,
+summary,
+center,
+code,
+pre,
+section,
+
+input,
+button,
+textarea
+
+{
+    color: rgb(255, 255, 255) !important;
+    background: rgb(0, 0, 0) !important;
+    background-color: none !important;
+    border: none !important;
+}
+
+a:hover {
+    color: rgb(52, 123, 255) !important;
+}
