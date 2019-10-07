@@ -2,166 +2,8 @@ function letThereBeDark() {
 'use strict';
 console.log('Let there be dark!');
 
-/**
- * Prase hex string to be a 3 element length array.
- * @param {string} hexStr
- */
-function hexToRgb(hexStr) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexStr);
-    return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
-}
-
-/**
- * Prase rgbStr to be a 3 element length array.
- * @param {string} rgbStr
- */
-function rgbToArray(rgbStr, hasAlpha=false) {
-    var colors = ['', '', ''];
-    var currentIndex = 0;
-
-    if (hasAlpha) {
-        colors = ['', '', '', ''];
-    }
-
-    for (var i = 0; i < rgbStr.length; i++) {
-        if (rgbStr[i] == ',') {
-            currentIndex++;
-            continue;
-        }
-        if (rgbStr[i] == ')') {
-            break;
-        }
-        if (rgbStr[i] != '.' && (isNaN(rgbStr[i]) || /^\s+$/.test(rgbStr[i]))) {
-            continue;
-        }
-
-        colors[currentIndex] += rgbStr[i];
-    }
-
-    for (var i = 0; i < colors.length; i++) {
-        colors[i] = parseFloat(colors[i]);
-    }
-
-    return colors;
-}
-
-/**
- * Make a darker color from the given one.
- * @param {3 / 4 element length rgb color array} color
- */
-function nightify(color, hasAlpha=true) {
-    if (color == '') {
-        return '';
-    }
-
-    var luminance = 85;
-    if (hasAlpha) {
-        luminance = color[3] * parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
-    }
-    else {
-        luminance = parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
-    }
-    
-    if (luminance > 42.5) {
-        color[0] *= 0.25;
-        color[1] *= 0.25;
-        color[2] *= 0.25;
-    }
-
-    return color;
-}
-
-/**
- * Sets image to be darker.
- * @param {DOM image tagNamed element} element
- */
-function nightifyImage(element) {
-    // element.style['background'] = '#000';
-    // element.style['opacity'] = '0.75';
-
-    element.style['filter'] = 'brightness(90%)';
-}
-
-/**
- * Make a lighter color from the given one.
- * @param {3 / 4 element length rgb color array} color
- */
-function lightify(color, hasAlpha=true) {
-    if (color == '') {
-        return '';
-    }
-
-    var luminance = 85;
-    if (hasAlpha) {
-        luminance = color[3] * parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
-    }
-    else {
-        luminance = parseFloat((color[0]*0.299 + color[1]*0.587 + color[2]*0.114) / 3);
-    }
-    
-    if (luminance <= 42.5) {
-        color[0] *= 1.25;
-        color[1] *= 1.25;
-        color[2] *= 1.25;
-    }
-
-    for (var i = 0; i < color.length; i++) {
-        if (color[i] > 255) {
-            color[i] = 255;
-        }
-    }
-
-    return color;
-}
-
-/**
- * Converts string color to [r, g, b, a] array
-* @param {valid css color} color
- */
-function getRgba(color) {
-    if (color == '') {
-        return '';
-    }
-
-    if (color.substring(0, 4) == 'rgba') {
-        color = rgbToArray(color, true);
-    }
-    else if (color.substring(0, 3) == 'rgb') {
-        color = rgbToArray(color, false);
-    }
-    else if (color[0] == '#') {
-        color = hexToRgb(color);
-    }
-    else if (color.toLowerCase() in VALID_CSS_COLORS) {
-        color = hexToRgb(VALID_CSS_COLORS[color.toLowerCase()]);
-    }
-    else {
-        var tmpColor = color.toLowerCase().split(' ')[0];
-        if (tmpColor in VALID_CSS_COLORS) {
-            color = hexToRgb(VALID_CSS_COLORS[tmpColor]);
-        }
-    }
-
-    if (color.length == 3) {
-        color.push(1.0);
-    }
-    return color;
-}
-
-/**
- * Convert color array to valid css string.
- * @param {[r, g, b, a] array} color
- */
-function rgbToString(color) {
-    if (color == '') {
-        return '';
-    }
-    return `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`;
-}
-
-
 // Color properties that are checked and changed on loading the page
-var COLOR_PROPERTIES = [
+const COLOR_PROPERTIES = [
     //'color',
     //'background-color',
     //'background',
@@ -173,7 +15,7 @@ var COLOR_PROPERTIES = [
     'border'
 ];
 
-var TEXT_TAGS = [
+const TEXT_TAGS = [
     'p',
     'a',
     'h1',
@@ -187,7 +29,7 @@ var TEXT_TAGS = [
     'td',
 ];
 
-var CONTAINER_TAGS = [
+const CONTAINER_TAGS = [
     'td',
     'p',
     'a',
@@ -214,14 +56,14 @@ var CONTAINER_TAGS = [
     'section'
 ];
 
-var FORM_TAGS = [
+const FORM_TAGS = [
     'input',
     'button',
     'textarea'
 ];
 
 // The object of valid css colors and their hex value
-var VALID_CSS_COLORS = {
+const VALID_CSS_COLORS = {
     'aliceblue': '#F0F8FF',
     'antiquewhite': '#FAEBD7',
     'aqua': '#00FFFF',
@@ -374,36 +216,244 @@ var VALID_CSS_COLORS = {
 };
 
 
-// Set all element's colors
-for (var element of document.getElementsByTagName('*')) {
-    if (element.tagName == 'IMG') continue;
+class CSSColor {
 
-    element.style['color'] = rgbToString(lightify(getRgba(element.style['color']))) || 'rgb(255, 255, 255)';
+    /**
+     * @param {string} sourceStr valid css color
+     * @param {boolean} isLight set 255 as a default color code
+     */
+    constructor(sourceStr, isLight) {
+        this.leftString = '';
+        this.r = isLight ? 255 : 0;
+        this.g = isLight ? 255 : 0;
+        this.b = isLight ? 255 : 0;
+        this.a = 1.0;
+        this.rightString = '';
+        this.isSet = this.fromString(sourceStr.trim()) != null;
+    }
 
-    element.style['box-shadow'] = 'none';
-    element.style['-moz-box-shadow'] = 'none';
-    element.style['text-shadow'] = 'none';
-    element.style['-moz-text-shadow'] = 'none';
+    toString() {
+        if (!this.isSet) {
+            return this.leftString + ' ' + this.rightString;
+        }
+        return (this.leftString + ` rgba(${this.r}, ${this.g}, ${this.b}, ${this.a}) ` + this.rightString).trim();
+    }
 
-    var newBg = rgbToString(nightify(getRgba(element.style['background'])));
-    var newBgColor = rgbToString(nightify(getRgba(element.style['background-color'])));
-    element.style['background'] = newBg || newBgColor || 'rgb(0, 0, 0)';
-    element.style['background-color'] = newBgColor || newBg || 'rgb(0, 0, 0)';
-    
-    element.style['border-top-color'] = rgbToString(nightify(getRgba(element.style['border-top-color']))) || 'rgb(0, 0, 0)';
-    element.style['border-right-color'] = rgbToString(nightify(getRgba(element.style['border-right-color']))) || 'rgb(0, 0, 0)';
-    element.style['border-bottom-color'] = rgbToString(nightify(getRgba(element.style['border-bottom-color']))) || 'rgb(0, 0, 0)';
-    element.style['border-left-color'] = rgbToString(nightify(getRgba(element.style['border-left-color']))) || 'rgb(0, 0, 0)';
-    element.style['border-color'] = rgbToString(nightify(getRgba(element.style['border-color']))) || 'rgb(0, 0, 0)';
-    element.style['border'] = rgbToString(nightify(getRgba(element.style['border']))) || 'rgb(0, 0, 0)';
+    /**
+     * Make a lighter color from the class.
+     */
+    lightify() {
+        if (!this.isSet) {
+            return this;
+        }
+
+        let luminance = this.a * parseFloat((this.r*0.299 + this.g*0.587 + this.b*0.114) / 3);
+        
+        if (luminance <= 42.5) {
+            this.r *= 1.75;
+            this.g *= 1.75;
+            this.b *= 1.75;
+        }
+
+        if (this.r > 255) {
+            this.r = 255;
+        }
+        if (this.g > 255) {
+            this.g = 255;
+        }
+        if (this.b > 255) {
+            this.b = 255;
+        }
+
+        return this;
+    }
+
+    /**
+     * Make a darker color from the class.
+     */
+    darkify() {
+        if (!this.isSet) {
+            return this;
+        }
+
+        let luminance = this.a * parseFloat((this.r*0.299 + this.g*0.587 + this.b*0.114) / 3);
+        
+        if (luminance > 42.5) {
+            this.r *= 0.25;
+            this.g *= 0.25;
+            this.b *= 0.25;
+        }
+
+        return this;
+    }
+
+    /**
+     * @param {string} sourceStr valid css color
+     */
+    fromString(sourceStr) {
+        if (!sourceStr) {
+            return null;
+        }
+
+        // Traverse the string to determine the type of color
+        for (let i = 0; i < sourceStr.length; i++) {
+            let leftStringArray = this.leftString.split(' ');
+
+            if (sourceStr.substring(i, 3) == 'rgb') {
+                let res = CSSColor.rgbToArray(sourceStr.substring(i, sourceStr.length));
+                
+                this.r = res[0];
+                this.g = res[1];
+                this.b = res[2];
+                this.a = res[3];
+                
+                if (res.length > 4) {
+                    this.rightString = res[4];
+                }
+                return res;
+            }
+            else if (sourceStr[i] == '#') {
+                let res = CSSColor.hexToArray(sourceStr.substring(i, sourceStr.length));
+                
+                this.r = res[0];
+                this.g = res[1];
+                this.b = res[2];
+                this.a = res[3];
+                
+                if (res.length > 4) {
+                    this.rightString = res[4];
+                }
+                return res;
+            }
+            else if (this.leftString.toLowerCase() in VALID_CSS_COLORS) {
+                let res = CSSColor.hexToArray(VALID_CSS_COLORS[this.leftString.toLowerCase()] + sourceStr.substring(i, sourceStr.length));
+                
+                this.r = res[0];
+                this.g = res[1];
+                this.b = res[2];
+                this.a = res[3];
+                
+                if (res.length > 4) {
+                    this.rightString = res[4];
+                }
+                this.leftString = '';
+                return res;
+            }
+            else if (leftStringArray[leftStringArray.length - 1] in VALID_CSS_COLORS) {
+                let res = CSSColor.hexToArray(VALID_CSS_COLORS[leftStringArray[leftStringArray.length - 1]] + sourceStr.substring(i, sourceStr.length));
+                
+                this.r = res[0];
+                this.g = res[1];
+                this.b = res[2];
+                this.a = res[3];
+                
+                if (res.length > 4) {
+                    this.rightString = res[4];
+                }
+
+                leftStringArray.pop();
+                this.leftString = leftStringArray.join(' ');
+                return res;
+            }
+
+            this.leftString += sourceStr[i];
+        }
+
+        return null;
+    }
+
+    /**
+     * Prase rgbStr to be a 4-5 element length array.
+     * @param {string} rgbStr
+     */
+    static rgbToArray(rgbStr) {
+        let colors = ['', '', '', ''];
+        let currentIndex = 0;
+        let hasOtherThanRgb = -1;
+        rgbStr = rgbStr.trim();
+
+        for (let i = 0; i < rgbStr.length; i++) {
+            if (rgbStr[i] == ',') {
+                currentIndex++;
+                continue;
+            }
+            if (rgbStr[i] == ')') {
+                if (i != rgbStr.length - 1) {
+                    hasOtherThanRgb = i + 1;
+                }
+                break;
+            }
+            if (rgbStr[i] != '.' && (isNaN(rgbStr[i]) || /^\s+$/.test(rgbStr[i]))) {
+                continue;
+            }
+
+            colors[currentIndex] += rgbStr[i];
+        }
+
+        for (let i = 0; i < colors.length; i++) {
+            colors[i] = parseFloat(colors[i]);
+        }
+
+        // Set alpha correctly
+        if (isNaN(colors[3])) {
+            colors[3] = 1.0;
+        }
+
+        if (hasOtherThanRgb != -1) {
+            colors.push(rgbStr.substring(hasOtherThanRgb, rgbStr.length).trim());
+        }
+
+        return colors;
+    }
+
+    /**
+     * Prase hex string to be a 4-5 element length array.
+     * @param {string} hexStr
+     */
+    static hexToArray(hexStr) {
+        let hexPart = '';
+        let rightString = '';
+
+        for (let i = 0; i < hexStr.length; i++) {
+            if (hexStr[i] == ' ') {
+                rightString = hexStr.substring(i, hexStr.length);
+                break;
+            }
+
+            hexPart += hexStr[i];
+        }
+
+        let result = /^#?([a-f\d]{1,2})([a-f\d]{1,2})([a-f\d]{1,2})$/i.exec(hexPart);
+        return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), 1.0, rightString.trim()];
+    }
+
 }
 
-for (var imgElement of document.getElementsByTagName('img')) {
-    nightifyImage(imgElement);
+for (let element of document.getElementsByTagName('*')) {
+    
+    // Set background
+    let newBg = new CSSColor(element.style.background).darkify().toString();
+    let newBgColor = new CSSColor(element.style.backgroundColor).darkify().toString();
+
+    if (newBg.r == 0 && newBg.g == 0 && newBg.b == 0) {
+        newBg = newBgColor;
+    }
+    else if (newBgColor.r == 0 && newBgColor.g == 0 && newBgColor.b == 0) {
+        newBgColor = newBg;
+    }
+
+    // element.style.background = newBg;
+    // element.style.backgroundColor = newBgColor;
+    element.style.color = new CSSColor(element.style.color, true).lightify().toString();
+}
+
+for (let imgElement of document.getElementsByTagName('img')) {
+    imgElement.style.filter = 'brightness(90%)';
 }
 
 // Set a darker body background
 // Determine if the body background is an image or not
+/*
 document.body.style['color'] = 'rgb(255, 255, 255)';
 
 if (window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none') {
@@ -416,6 +466,8 @@ else {
     document.body.style['background-color'] = 'rgb(0, 0, 0)';
     document.body.style['background'] = 'rgb(0, 0, 0)';
 }
+*/
 
-}letThereBeDark();
+}  // letThereBeDark
+letThereBeDark();
 document.onchange = 'letThereBeDark()';

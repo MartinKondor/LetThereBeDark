@@ -1,3 +1,4 @@
+/*
 html,
 body,
 p,
@@ -10,17 +11,6 @@ h6,
 i,
 strong,
 td,
-a,
-a:hover,
-a:link,
-a:visited,
-a:active,
-a:target,
-a:focus,
-a::after,
-a::before,
-a:not([href]),
-
 td,
 p,
 a,
@@ -43,12 +33,22 @@ center,
 code,
 pre,
 section,
-
 input,
 button,
 textarea
+*/
 
-{
+/*
+a,
+a:hover,
+a:link,
+a:visited,
+a:active,
+a:target,
+a:focus,
+a::after,
+a::before,
+a:not([href]) {
     color: rgb(255, 255, 255) !important;
     background: rgb(0, 0, 0) !important;
     background-color: none !important;
@@ -56,5 +56,6 @@ textarea
 }
 
 a:hover {
-    color: rgb(52, 123, 255) !important;
+    color: rgb(80, 141, 255) !important;
 }
+*/
