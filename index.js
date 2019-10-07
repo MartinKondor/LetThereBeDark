@@ -376,7 +376,14 @@ var VALID_CSS_COLORS = {
 
 // Set all element's colors
 for (var element of document.getElementsByTagName('*')) {
+    if (element.tagName == 'IMG') continue;
+
     element.style['color'] = rgbToString(lightify(getRgba(element.style['color']))) || 'rgb(255, 255, 255)';
+
+    element.style['box-shadow'] = 'none';
+    element.style['-moz-box-shadow'] = 'none';
+    element.style['text-shadow'] = 'none';
+    element.style['-moz-text-shadow'] = 'none';
 
     var newBg = rgbToString(nightify(getRgba(element.style['background'])));
     var newBgColor = rgbToString(nightify(getRgba(element.style['background-color'])));
