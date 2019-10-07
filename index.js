@@ -296,9 +296,9 @@ class CSSColor {
         }
 
         // Traverse the string to determine the type of color
-        for (let i = 0; i < sourceStr.length; i++) {
-            let leftStringArray = this.leftString.split(' ');
+        let i = 0;
 
+        for (; i < sourceStr.length; i++) {
             if (sourceStr.substring(i, 3) == 'rgb') {
                 let res = CSSColor.rgbToArray(sourceStr.substring(i, sourceStr.length));
                 
@@ -339,26 +339,28 @@ class CSSColor {
                 this.leftString = '';
                 return res;
             }
-            else if (leftStringArray[leftStringArray.length - 1] in VALID_CSS_COLORS) {
-                let res = CSSColor.hexToArray(VALID_CSS_COLORS[leftStringArray[leftStringArray.length - 1]] + sourceStr.substring(i, sourceStr.length));
-                
-                this.r = res[0];
-                this.g = res[1];
-                this.b = res[2];
-                this.a = res[3];
-                
-                if (res.length > 4) {
-                    this.rightString = res[4];
-                }
-
-                leftStringArray.pop();
-                this.leftString = leftStringArray.join(' ');
-                return res;
-            }
 
             this.leftString += sourceStr[i];
         }
 
+        // Last check for color on the left part
+        let leftColor = this.leftString.split(' ').pop().trim().toLowerCase();
+        
+        if (leftColor in VALID_CSS_COLORS) {
+            let res = CSSColor.hexToArray(VALID_CSS_COLORS[leftColor] + sourceStr.substring(i, sourceStr.length));
+            
+            this.r = res[0];
+            this.g = res[1];
+            this.b = res[2];
+            this.a = res[3];
+            
+            if (res.length > 4) {
+                this.rightString = res[4];
+            }
+            this.leftString = '';
+            return res;
+        }
+        
         return null;
     }
 
@@ -444,7 +446,7 @@ for (let element of document.getElementsByTagName('*')) {
 
     // element.style.background = newBg;
     // element.style.backgroundColor = newBgColor;
-    element.style.color = new CSSColor(element.style.color, true).lightify().toString();
+    // element.style['color'] = new CSSColor(element.style['color'], true).lightify().toString();
 }
 
 for (let imgElement of document.getElementsByTagName('img')) {
