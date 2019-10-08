@@ -38,7 +38,6 @@ button,
 textarea
 */
 
-/*
 a,
 a:hover,
 a:link,
@@ -53,9 +52,22 @@ a:not([href]) {
     background: rgb(0, 0, 0) !important;
     background-color: none !important;
     border: none !important;
+
+    -webkit-transition: color 0.9s;
+    transition: color 0.9s;
 }
 
 a:hover {
     color: rgb(80, 141, 255) !important;
 }
-*/
+
+img {
+    filter: brightness(90%);
+
+    -webkit-transition: filter 0.9s;
+    transition: filter 0.9s;
+}
+
+img:hover {
+    filter: brightness(100%)
+}

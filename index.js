@@ -1,4 +1,4 @@
-function letThereBeDark() {
+(function() {
 'use strict';
 console.log('Let there be dark!');
 
@@ -53,7 +53,8 @@ const CONTAINER_TAGS = [
     'center',
     'code',
     'pre',
-    'section'
+    'section',
+    'aside'
 ];
 
 const FORM_TAGS = [
@@ -234,7 +235,7 @@ class CSSColor {
 
     toString() {
         if (!this.isSet) {
-            return this.leftString + ' ' + this.rightString;
+            return (this.leftString + ' ' + this.rightString).trim();
         }
         return (this.leftString + ` rgba(${this.r}, ${this.g}, ${this.b}, ${this.a}) ` + this.rightString).trim();
     }
@@ -247,23 +248,9 @@ class CSSColor {
             return this;
         }
 
-        let luminance = this.a * parseFloat((this.r*0.299 + this.g*0.587 + this.b*0.114) / 3);
-        
-        if (luminance <= 42.5) {
-            this.r *= 1.75;
-            this.g *= 1.75;
-            this.b *= 1.75;
-        }
-
-        if (this.r > 255) {
-            this.r = 255;
-        }
-        if (this.g > 255) {
-            this.g = 255;
-        }
-        if (this.b > 255) {
-            this.b = 255;
-        }
+        this.r = 255;
+        this.g = 255;
+        this.b = 255;
 
         return this;
     }
@@ -276,9 +263,7 @@ class CSSColor {
             return this;
         }
 
-        let luminance = this.a * parseFloat((this.r*0.299 + this.g*0.587 + this.b*0.114) / 3);
-        
-        if (luminance > 42.5) {
+        if (this.isLight()) {
             this.r *= 0.25;
             this.g *= 0.25;
             this.b *= 0.25;
@@ -361,7 +346,12 @@ class CSSColor {
             return res;
         }
         
+        console.error(`Cannot parse '${sourceStr}'`);
         return null;
+    }
+
+    isLight() {
+        return (this.a * parseFloat((this.r*0.299 + this.g*0.587 + this.b*0.114) / 3)) > 42.5;
     }
 
     /**
@@ -431,31 +421,41 @@ class CSSColor {
 
 }
 
-for (let element of document.getElementsByTagName('*')) {
-    
-    // Set background
+function nightifyElement(element) {
+    element.style.color = new CSSColor(element.style.color, true).lightify().toString() || 'rgb(255, 255, 255)';
+
     let newBg = new CSSColor(element.style.background).darkify().toString();
     let newBgColor = new CSSColor(element.style.backgroundColor).darkify().toString();
+    
+    element.style.background = newBg || newBgColor || 'rgb(0, 0, 0)';
+    element.style.backgroundColor = newBgColor || newBg || 'rgb(0, 0, 0)';
 
-    if (newBg.r == 0 && newBg.g == 0 && newBg.b == 0) {
-        newBg = newBgColor;
-    }
-    else if (newBgColor.r == 0 && newBgColor.g == 0 && newBgColor.b == 0) {
-        newBgColor = newBg;
-    }
+    /*
+    let newBorderColor = new CSSColor(element.style.borderColor).darkify().toString();
+    let newBorderTopColor = new CSSColor(element.style.borderTopColor).darkify().toString();
+    let newBorderRightColor = new CSSColor(element.style.borderRightColor).darkify().toString();
+    let newBorderBottomColor = new CSSColor(element.style.borderBottomColor).darkify().toString();
+    let newBorderLeftColor = new CSSColor(element.style.borderLeftColor).darkify().toString();
+    let newBorder = new CSSColor(element.style.border).darkify().toString();
 
-    // element.style.background = newBg;
-    // element.style.backgroundColor = newBgColor;
-    // element.style['color'] = new CSSColor(element.style['color'], true).lightify().toString();
+    element.style.borderColor = newBorderColor || newBorderTopColor || newBorderRightColor || newBorderBottomColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
+    element.style.borderTopColor = newBorderTopColor || newBorderColor || newBorderRightColor || newBorderBottomColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
+    element.style.borderRightColor = newBorderRightColor || newBorderColor || newBorderTopColor || newBorderBottomColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
+    element.style.borderBottomColor = newBorderBottomColor || newBorderColor || newBorderTopColor || newBorderRightColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
+    element.style.borderLeftColor = newBorderLeftColor || newBorderColor || newBorderTopColor || newBorderRightColor || newBorderBottomColor || newBorder || 'rgb(0, 0, 0)';
+    element.style.border = newBorder || newBorderColor || newBorderTopColor || newBorderRightColor || newBorderBottomColor || newBorderLeftColor || 'rgb(0, 0, 0)';
+
+    element.style.boxShadow = new CSSColor(element.style.boxShadow).darkify().toString() || 'rgb(0, 0, 0)';
+    element.style.textShadow = new CSSColor(element.style.textShadow).darkify().toString() || 'rgb(0, 0, 0)';
+    */
 }
 
-for (let imgElement of document.getElementsByTagName('img')) {
-    imgElement.style.filter = 'brightness(90%)';
+for (let element of document.body.getElementsByTagName('*')) {
+    nightifyElement(element);
 }
 
 // Set a darker body background
 // Determine if the body background is an image or not
-/*
 document.body.style['color'] = 'rgb(255, 255, 255)';
 
 if (window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none') {
@@ -468,8 +468,5 @@ else {
     document.body.style['background-color'] = 'rgb(0, 0, 0)';
     document.body.style['background'] = 'rgb(0, 0, 0)';
 }
-*/
 
-}  // letThereBeDark
-letThereBeDark();
-document.onchange = 'letThereBeDark()';
+})()
