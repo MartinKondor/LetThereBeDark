@@ -1,69 +1,27 @@
-/*
-html,
-body,
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-i,
-strong,
-td,
-td,
-p,
 a,
-span,
-form,
-div,
-nav,
-header,
-footer,
-aside,
-main,
-ul,
-ol,
-tbody,
-thead,
-tr,
-details,
-summary,
-center,
-code,
-pre,
-section,
-input,
-button,
-textarea
-*/
 
-a,
 a:hover,
+a:focus,
+
 a:link,
 a:visited,
 a:active,
 a:target,
-a:focus,
 a::after,
 a::before,
 a:not([href]) {
     color: rgb(255, 255, 255) !important;
-    background: rgb(0, 0, 0) !important;
-    background-color: none !important;
-    border: none !important;
-
     -webkit-transition: color 0.9s;
     transition: color 0.9s;
 }
 
-a:hover {
+a:hover,
+a:focus {
     color: rgb(80, 141, 255) !important;
 }
 
 img {
-    filter: brightness(90%);
-
+    filter: brightness(50%);
     -webkit-transition: filter 0.9s;
     transition: filter 0.9s;
 }

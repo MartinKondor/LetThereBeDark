@@ -2,32 +2,9 @@
 'use strict';
 console.log('Let there be dark!');
 
-// Color properties that are checked and changed on loading the page
-const COLOR_PROPERTIES = [
-    //'color',
-    //'background-color',
-    //'background',
-    'border-color',
-    'border-top-color',
-    'border-right-color',
-    'border-bottom-color',
-    'border-left-color',
-    'border'
-];
-
-const TEXT_TAGS = [
-    'p',
-    'a',
-    'h1',
-    'h2',
-    'h3',
-    'h4',
-    'h5',
-    'h6',
-    'i',
-    'strong',
-    'td',
-];
+const BG_COLOR = 'rgb(12, 12, 12)';
+const LIGHTER_BG_COLOR = 'rgb(37, 37, 37)';
+const TEXT_COLOR = 'rgb(220, 220, 220)';
 
 const CONTAINER_TAGS = [
     'td',
@@ -55,12 +32,6 @@ const CONTAINER_TAGS = [
     'pre',
     'section',
     'aside'
-];
-
-const FORM_TAGS = [
-    'input',
-    'button',
-    'textarea'
 ];
 
 // The object of valid css colors and their hex value
@@ -276,7 +247,7 @@ class CSSColor {
      * @param {string} sourceStr valid css color
      */
     fromString(sourceStr) {
-        if (!sourceStr) {
+        if (!sourceStr || sourceStr == 'none') {
             return null;
         }
 
@@ -345,7 +316,7 @@ class CSSColor {
             this.leftString = '';
             return res;
         }
-        
+
         console.error(`Cannot parse '${sourceStr}'`);
         return null;
     }
@@ -421,52 +392,39 @@ class CSSColor {
 
 }
 
-function nightifyElement(element) {
-    element.style.color = new CSSColor(element.style.color, true).lightify().toString() || 'rgb(255, 255, 255)';
-
-    let newBg = new CSSColor(element.style.background).darkify().toString();
-    let newBgColor = new CSSColor(element.style.backgroundColor).darkify().toString();
-    
-    element.style.background = newBg || newBgColor || 'rgb(0, 0, 0)';
-    element.style.backgroundColor = newBgColor || newBg || 'rgb(0, 0, 0)';
-
-    /*
-    let newBorderColor = new CSSColor(element.style.borderColor).darkify().toString();
-    let newBorderTopColor = new CSSColor(element.style.borderTopColor).darkify().toString();
-    let newBorderRightColor = new CSSColor(element.style.borderRightColor).darkify().toString();
-    let newBorderBottomColor = new CSSColor(element.style.borderBottomColor).darkify().toString();
-    let newBorderLeftColor = new CSSColor(element.style.borderLeftColor).darkify().toString();
-    let newBorder = new CSSColor(element.style.border).darkify().toString();
-
-    element.style.borderColor = newBorderColor || newBorderTopColor || newBorderRightColor || newBorderBottomColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
-    element.style.borderTopColor = newBorderTopColor || newBorderColor || newBorderRightColor || newBorderBottomColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
-    element.style.borderRightColor = newBorderRightColor || newBorderColor || newBorderTopColor || newBorderBottomColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
-    element.style.borderBottomColor = newBorderBottomColor || newBorderColor || newBorderTopColor || newBorderRightColor || newBorderLeftColor || newBorder || 'rgb(0, 0, 0)';
-    element.style.borderLeftColor = newBorderLeftColor || newBorderColor || newBorderTopColor || newBorderRightColor || newBorderBottomColor || newBorder || 'rgb(0, 0, 0)';
-    element.style.border = newBorder || newBorderColor || newBorderTopColor || newBorderRightColor || newBorderBottomColor || newBorderLeftColor || 'rgb(0, 0, 0)';
-
-    element.style.boxShadow = new CSSColor(element.style.boxShadow).darkify().toString() || 'rgb(0, 0, 0)';
-    element.style.textShadow = new CSSColor(element.style.textShadow).darkify().toString() || 'rgb(0, 0, 0)';
-    */
-}
-
 for (let element of document.body.getElementsByTagName('*')) {
-    nightifyElement(element);
+    let elementStyle = window.getComputedStyle(element);
+
+    element.style.setProperty('color', TEXT_COLOR, 'important');
+    element.style.setProperty('box-shadow', new CSSColor(element.style.boxShadow || elementStyle.boxShadow).darkify().toString(), 'important');
+    element.style.setProperty('text-shadow', new CSSColor(element.style.textShadow || elementStyle.textShadow).darkify().toString(), 'important');
+
+    // In case of an input field
+    if (element.type) {
+        element.style.setProperty('background', new CSSColor(element.style.background || elementStyle.background).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementStyle.backgroundColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+    }
+    else {
+        element.style.setProperty('background', new CSSColor(element.style.background || elementStyle.background).darkify().toString(), 'important');
+        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementStyle.backgroundColor).darkify().toString(), 'important');
+    }
+
+    if (element.style.borderColor || elementStyle.borderColor || element.type) {
+        element.style.setProperty('border-color', new CSSColor(element.style.borderColor || elementStyle.borderColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border', new CSSColor(element.style.border || elementStyle.border).darkify().toString() || '1px solid ' + TEXT_COLOR, 'important');
+        element.style.setProperty('border-top-color', new CSSColor(element.style.borderTopColor || elementStyle.borderTopColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border-right-color', new CSSColor(element.style.borderRightColor || elementStyle.borderRightColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border-bottom-color', new CSSColor(element.style.borderBottomColor || elementStyle.borderBottomColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border-left-color', new CSSColor(element.style.borderLeftColor || elementStyle.borderLeftColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+    }
 }
+
+document.body.style.color = TEXT_COLOR;
 
 // Set a darker body background
 // Determine if the body background is an image or not
-document.body.style['color'] = 'rgb(255, 255, 255)';
-
-if (window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none') {
-    document.body.style['background-color'] = 'rgb(0, 0, 0)';
-
-    // TODO
-    document.body.style['background'] = 'rgb(0, 0, 0)';
-}
-else {
-    document.body.style['background-color'] = 'rgb(0, 0, 0)';
-    document.body.style['background'] = 'rgb(0, 0, 0)';
-}
+// window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none'
+document.body.style.backgroundColor = new CSSColor(document.body.style.backgroundColor).darkify().toString() || BG_COLOR;
+document.body.style.background = new CSSColor(document.body.style.background).toString() || BG_COLOR;
 
 })()
