@@ -1,3 +1,16 @@
+
+body {
+    background-color: rgb(30,34,39);
+    color: #ffffff;
+}
+
+body code[class*=language-],
+body table tbody>tr:nth-child(odd)>td,
+body table tbody>tr:nth-child(odd)>th {
+    background: #282c34;
+}
+  
+
 a,
 
 a:hover,
@@ -11,13 +24,18 @@ a::after,
 a::before,
 a:not([href]) {
     color: rgb(255, 255, 255) !important;
-    -webkit-transition: color 0.9s;
-    transition: color 0.9s;
+    -webkit-transition: color 0.7s;
+    -moz-transition: color 0.7s;
+    transition: color 0.7s;
 }
 
 a:hover,
 a:focus {
     color: rgb(80, 141, 255) !important;
+}
+
+p {
+    color: #ffffff !important;
 }
 
 img {
@@ -27,5 +45,5 @@ img {
 }
 
 img:hover {
-    filter: brightness(100%)
+    filter: brightness(100%) !important;
 }

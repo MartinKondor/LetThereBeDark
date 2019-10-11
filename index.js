@@ -1,38 +1,10 @@
-(function() {
+function letThereBeDark() {
 'use strict';
 console.log('Let there be dark!');
 
 const BG_COLOR = 'rgb(12, 12, 12)';
 const LIGHTER_BG_COLOR = 'rgb(37, 37, 37)';
 const TEXT_COLOR = 'rgb(220, 220, 220)';
-
-const CONTAINER_TAGS = [
-    'td',
-    'p',
-    'a',
-    'span',
-    'form',
-    'div',
-    'nav',
-    'header',
-    'footer',
-    'aside',
-    'main',
-    'ul',
-    'ol',
-    'tbody',
-    'thead',
-    'rhead',
-    'rbody',
-    'tr',
-    'details',
-    'summary',
-    'center',
-    'code',
-    'pre',
-    'section',
-    'aside'
-];
 
 // The object of valid css colors and their hex value
 const VALID_CSS_COLORS = {
@@ -186,7 +158,6 @@ const VALID_CSS_COLORS = {
     'yellowgreen': '#9ACD32',
     'transparent': '#000000'
 };
-
 
 class CSSColor {
 
@@ -392,6 +363,7 @@ class CSSColor {
 
 }
 
+
 for (let element of document.body.getElementsByTagName('*')) {
     let elementStyle = window.getComputedStyle(element);
 
@@ -411,7 +383,7 @@ for (let element of document.body.getElementsByTagName('*')) {
 
     if (element.style.borderColor || elementStyle.borderColor || element.type) {
         element.style.setProperty('border-color', new CSSColor(element.style.borderColor || elementStyle.borderColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border', new CSSColor(element.style.border || elementStyle.border).darkify().toString() || '1px solid ' + TEXT_COLOR, 'important');
+        element.style.setProperty('border', new CSSColor(element.style.border || elementStyle.border).darkify().toString() || ('1px solid ' + TEXT_COLOR), 'important');
         element.style.setProperty('border-top-color', new CSSColor(element.style.borderTopColor || elementStyle.borderTopColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
         element.style.setProperty('border-right-color', new CSSColor(element.style.borderRightColor || elementStyle.borderRightColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
         element.style.setProperty('border-bottom-color', new CSSColor(element.style.borderBottomColor || elementStyle.borderBottomColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
@@ -427,4 +399,5 @@ document.body.style.color = TEXT_COLOR;
 document.body.style.backgroundColor = new CSSColor(document.body.style.backgroundColor).darkify().toString() || BG_COLOR;
 document.body.style.background = new CSSColor(document.body.style.background).toString() || BG_COLOR;
 
-})()
+}
+letThereBeDark();
