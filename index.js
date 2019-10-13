@@ -1,10 +1,10 @@
-function letThereBeDark() {
+(function(a) {
 'use strict';
 console.log('Let there be dark!');
 
 const BG_COLOR = 'rgb(12, 12, 12)';
 const LIGHTER_BG_COLOR = 'rgb(37, 37, 37)';
-const TEXT_COLOR = 'rgb(220, 220, 220)';
+const TEXT_COLOR = 'rgb(225, 225, 225)';
 
 // The object of valid css colors and their hex value
 const VALID_CSS_COLORS = {
@@ -373,6 +373,7 @@ for (let element of document.body.getElementsByTagName('*')) {
 
     // In case of an input field
     if (element.type) {
+        element.style.setProperty('radius', '0px', 'important');  // For preventing visual bugs
         element.style.setProperty('background', new CSSColor(element.style.background || elementStyle.background).darkify().toString() || LIGHTER_BG_COLOR, 'important');
         element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementStyle.backgroundColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
     }
@@ -389,15 +390,16 @@ for (let element of document.body.getElementsByTagName('*')) {
         element.style.setProperty('border-bottom-color', new CSSColor(element.style.borderBottomColor || elementStyle.borderBottomColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
         element.style.setProperty('border-left-color', new CSSColor(element.style.borderLeftColor || elementStyle.borderLeftColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
     }
+
 }
 
-document.body.style.color = TEXT_COLOR;
+
+document.body.style.setProperty('color', TEXT_COLOR, 'important');
 
 // Set a darker body background
 // Determine if the body background is an image or not
 // window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none'
-document.body.style.backgroundColor = new CSSColor(document.body.style.backgroundColor).darkify().toString() || BG_COLOR;
-document.body.style.background = new CSSColor(document.body.style.background).toString() || BG_COLOR;
+document.body.style.setProperty('background-color', new CSSColor(document.body.style.backgroundColor).darkify().toString() || BG_COLOR, 'important');
+document.body.style.setProperty('background', new CSSColor(document.body.style.background).toString() || BG_COLOR, 'important');
 
-}
-letThereBeDark();
+})();

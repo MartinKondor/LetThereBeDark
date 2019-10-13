@@ -13,9 +13,23 @@
             "all_frames": true,
             "match_about_blank": true,
             "matches": ["<all_urls>"],
+            "js": ["index_start.js"],
+            "run_at": "document_start"
+        },
+        {
+            "all_frames": true,
+            "match_about_blank": true,
+            "matches": ["<all_urls>"],
+            "js": ["index_end.js"],
+            "run_at": "document_end"
+        },
+        {
+            "all_frames": true,
+            "match_about_blank": true,
+            "matches": ["<all_urls>"],
             "js": ["index.js"],
             "css" : ["index.css"],
-            "run_at": "document_start"
+            "run_at": "document_idle"
         }
     ]
 }
