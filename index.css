@@ -2,21 +2,16 @@
 body {
     background: rgb(30, 34, 39) !important;
     background-color: rgb(30, 34, 39) !important;
-    color: #ffffff;
+    color: rgb(250, 250, 250) !important;
 }
 
 body code[class*=language-],
 body table tbody>tr:nth-child(odd)>td,
 body table tbody>tr:nth-child(odd)>th {
-    background: #282c34;
-}
-  
+    background: #282c34 !important;
+} 
 
 a,
-
-a:hover,
-a:focus,
-
 a:link,
 a:visited,
 a:active,
@@ -24,27 +19,32 @@ a:target,
 a::after,
 a::before,
 a:not([href]) {
-    color: rgb(255, 255, 255) !important;
-    -webkit-transition: color 0.7s;
-    -moz-transition: color 0.7s;
-    transition: color 0.7s;
+    color: rgb(250, 250, 250) !important;
 }
 
 a:hover,
 a:focus {
-    color: rgb(80, 141, 255) !important;
+    color: rgb(57, 122, 243) !important;
 }
 
-p {
-    color: #ffffff !important;
+p,
+span,
+div {
+    color: rgb(250, 250, 250) !important;
 }
 
 img {
-    filter: brightness(50%);
-    -webkit-transition: filter 0.9s;
-    transition: filter 0.9s;
+    filter: brightness(50%) !important;
+    -webkit-transition: filter 0.4s;
+    -moz-transition: filter 0.4s;
+    transition: filter 0.4s;
 }
 
 img:hover {
     filter: brightness(100%) !important;
+}
+
+/* Github */
+.Box {
+    background-color: rgb(30, 34, 39) !important;
 }

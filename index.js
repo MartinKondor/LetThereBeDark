@@ -1,10 +1,10 @@
-(function(a) {
+(function () {
 'use strict';
-console.log('Let there be dark!');
+// console.log('Let there be dark!');
 
-const BG_COLOR = 'rgb(12, 12, 12)';
-const LIGHTER_BG_COLOR = 'rgb(37, 37, 37)';
-const TEXT_COLOR = 'rgb(225, 225, 225)';
+const BG_COLOR = 'rgb(17, 17, 17)';
+const LIGHTER_BG_COLOR = 'rgb(17, 17, 17)';
+const TEXT_COLOR = 'rgb(245, 245, 245)';
 
 // The object of valid css colors and their hex value
 const VALID_CSS_COLORS = {
@@ -365,32 +365,31 @@ class CSSColor {
 
 
 for (let element of document.body.getElementsByTagName('*')) {
-    let elementStyle = window.getComputedStyle(element);
+    let elementComputedStyle = window.getComputedStyle(element);
 
     element.style.setProperty('color', TEXT_COLOR, 'important');
-    element.style.setProperty('box-shadow', new CSSColor(element.style.boxShadow || elementStyle.boxShadow).darkify().toString(), 'important');
-    element.style.setProperty('text-shadow', new CSSColor(element.style.textShadow || elementStyle.textShadow).darkify().toString(), 'important');
+    element.style.setProperty('box-shadow', new CSSColor(element.style.boxShadow || elementComputedStyle.boxShadow).darkify().toString(), 'important');
+    element.style.setProperty('text-shadow', new CSSColor(element.style.textShadow || elementComputedStyle.textShadow).darkify().toString(), 'important');
 
     // In case of an input field
     if (element.type) {
         element.style.setProperty('radius', '0px', 'important');  // For preventing visual bugs
-        element.style.setProperty('background', new CSSColor(element.style.background || elementStyle.background).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementStyle.backgroundColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('background', new CSSColor(element.style.background || elementComputedStyle.background).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementComputedStyle.backgroundColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
     }
     else {
-        element.style.setProperty('background', new CSSColor(element.style.background || elementStyle.background).darkify().toString(), 'important');
-        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementStyle.backgroundColor).darkify().toString(), 'important');
+        element.style.setProperty('background', new CSSColor(element.style.background || elementComputedStyle.background).darkify().toString(), 'important');
+        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementComputedStyle.backgroundColor).darkify().toString(), 'important');
     }
 
-    if (element.style.borderColor || elementStyle.borderColor || element.type) {
-        element.style.setProperty('border-color', new CSSColor(element.style.borderColor || elementStyle.borderColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border', new CSSColor(element.style.border || elementStyle.border).darkify().toString() || ('1px solid ' + TEXT_COLOR), 'important');
-        element.style.setProperty('border-top-color', new CSSColor(element.style.borderTopColor || elementStyle.borderTopColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border-right-color', new CSSColor(element.style.borderRightColor || elementStyle.borderRightColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border-bottom-color', new CSSColor(element.style.borderBottomColor || elementStyle.borderBottomColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border-left-color', new CSSColor(element.style.borderLeftColor || elementStyle.borderLeftColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+    if (element.style.borderColor || elementComputedStyle.borderColor || element.type) {
+        element.style.setProperty('border-color', new CSSColor(element.style.borderColor || elementComputedStyle.borderColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border', new CSSColor(element.style.border || elementComputedStyle.border).darkify().toString() || ('1px solid ' + TEXT_COLOR), 'important');
+        element.style.setProperty('border-top-color', new CSSColor(element.style.borderTopColor || elementComputedStyle.borderTopColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border-right-color', new CSSColor(element.style.borderRightColor || elementComputedStyle.borderRightColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border-bottom-color', new CSSColor(element.style.borderBottomColor || elementComputedStyle.borderBottomColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('border-left-color', new CSSColor(element.style.borderLeftColor || elementComputedStyle.borderLeftColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
     }
-
 }
 
 
@@ -401,5 +400,4 @@ document.body.style.setProperty('color', TEXT_COLOR, 'important');
 // window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none'
 document.body.style.setProperty('background-color', new CSSColor(document.body.style.backgroundColor).darkify().toString() || BG_COLOR, 'important');
 document.body.style.setProperty('background', new CSSColor(document.body.style.background).toString() || BG_COLOR, 'important');
-
 })();
