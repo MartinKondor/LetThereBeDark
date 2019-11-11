@@ -368,18 +368,18 @@ for (let element of document.body.getElementsByTagName('*')) {
     let elementComputedStyle = window.getComputedStyle(element);
 
     element.style.setProperty('color', TEXT_COLOR, 'important');
-    element.style.setProperty('box-shadow', new CSSColor(element.style.boxShadow || elementComputedStyle.boxShadow).darkify().toString(), 'important');
-    element.style.setProperty('text-shadow', new CSSColor(element.style.textShadow || elementComputedStyle.textShadow).darkify().toString(), 'important');
+    element.style.setProperty('box-shadow', new CSSColor(element.style.getPropertyValue('box-shadow') || elementComputedStyle.getPropertyValue('box-shadow')).darkify().toString(), 'important');
+    element.style.setProperty('text-shadow', new CSSColor(element.style.getPropertyValue('text-shadow') || elementComputedStyle.getPropertyValue('text-shadow')).darkify().toString(), 'important');
 
     // In case of an input field
     if (element.type) {
         element.style.setProperty('radius', '0px', 'important');  // For preventing visual bugs
-        element.style.setProperty('background', new CSSColor(element.style.background || elementComputedStyle.background).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementComputedStyle.backgroundColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('background', new CSSColor(element.style.getPropertyValue('background') || elementComputedStyle.getPropertyValue('background')).darkify().toString() || LIGHTER_BG_COLOR, 'important');
+        element.style.setProperty('background-color', new CSSColor(element.style.getPropertyValue('background-color') || elementComputedStyle.getPropertyValue('background-color')).darkify().toString() || LIGHTER_BG_COLOR, 'important');
     }
     else {
-        element.style.setProperty('background', new CSSColor(element.style.background || elementComputedStyle.background).darkify().toString(), 'important');
-        element.style.setProperty('background-color', new CSSColor(element.style.backgroundColor || elementComputedStyle.backgroundColor).darkify().toString(), 'important');
+        element.style.setProperty('background', new CSSColor(element.style.getPropertyValue('background') || elementComputedStyle.getPropertyValue('background')).darkify().toString(), 'important');
+        element.style.setProperty('background-color', new CSSColor(element.style.getPropertyValue('background-color') || elementComputedStyle.getPropertyValue('background-color')).darkify().toString(), 'important');
     }
 
     if (element.style.borderColor || elementComputedStyle.borderColor || element.type) {
@@ -398,6 +398,6 @@ document.body.style.setProperty('color', TEXT_COLOR, 'important');
 // Set a darker body background
 // Determine if the body background is an image or not
 // window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none'
-document.body.style.setProperty('background-color', new CSSColor(document.body.style.backgroundColor).darkify().toString() || BG_COLOR, 'important');
-document.body.style.setProperty('background', new CSSColor(document.body.style.background).toString() || BG_COLOR, 'important');
+document.body.style.setProperty('background-color', new CSSColor(document.body.style.getPropertyValue('background-color')).darkify().toString() || BG_COLOR, 'important');
+document.body.style.setProperty('background', new CSSColor(document.body.style.getPropertyValue('background')).toString() || BG_COLOR, 'important');
 })();
