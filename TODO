@@ -1,1 +1,2 @@
--
+- Make it watch for changes in the DOM.
+- Load immediatly with the page to prevent white screen.

@@ -1,3 +1,7 @@
+<p align="center">
+    <img width="950" src="/static/img/readme.png">
+</p>
+
 # <img src="icons/icon-48.png"> LetThereBeDark
 
 [![version](https://img.shields.io/badge/version-v0.9.0-red.svg)](https://github.com/MartinKondor/LetThereBeDark) [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/MartinKondor/LetThereBeDark) ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg) [![GitHub Issues](https://img.shields.io/github/issues/MartinKondor/LetThereBeDark.svg)](https://github.com/MartinKondor/LetThereBeDark/issues)
