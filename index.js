@@ -289,6 +289,15 @@ class CSSColor {
         }
 
         console.error(`Cannot parse '${sourceStr}'`);
+
+        // Set it to basic black
+        this.r = 7;
+        this.g = 7;
+        this.b = 7;
+        this.a = 1;
+        this.leftString = '';
+        this.rightString = '';
+
         return null;
     }
 
@@ -369,6 +378,7 @@ function darkifyElement(element) {
 
     // Lightify colors
     element.style.setProperty('color', new CSSColor(element.style.getPropertyValue('color') || elementComputedStyle.getPropertyValue('color') || TEXT_COLOR).lightify().toString(), 'important');
+    // element.style.setProperty('background', new CSSColor(element.style.getPropertyValue('background') || elementComputedStyle.getPropertyValue('background')).darkify().toString(), 'important');
     element.style.setProperty('background-color', new CSSColor(element.style.getPropertyValue('background-color') || elementComputedStyle.getPropertyValue('background-color') || LIGHTER_BG_COLOR).darkify().toString(), 'important');
     element.style.setProperty('box-shadow', new CSSColor(element.style.getPropertyValue('box-shadow') || elementComputedStyle.getPropertyValue('box-shadow')).darkify().toString(), 'important');
     element.style.setProperty('text-shadow', new CSSColor(element.style.getPropertyValue('text-shadow') || elementComputedStyle.getPropertyValue('text-shadow')).darkify().toString(), 'important');
@@ -386,37 +396,9 @@ function darkifyElement(element) {
 
 for (let element of document.body.getElementsByTagName('*')) {
     darkifyElement(element);
-
-    /*
-    element.style.setProperty('color', TEXT_COLOR, 'important');
-    element.style.setProperty('box-shadow', new CSSColor(element.style.getPropertyValue('box-shadow') || elementComputedStyle.getPropertyValue('box-shadow')).darkify().toString(), 'important');
-    element.style.setProperty('text-shadow', new CSSColor(element.style.getPropertyValue('text-shadow') || elementComputedStyle.getPropertyValue('text-shadow')).darkify().toString(), 'important');
-
-    // In case of an input field
-    if (element.type) {
-        element.style.setProperty('radius', '0px', 'important');  // For preventing visual bugs
-        element.style.setProperty('background', new CSSColor(element.style.getPropertyValue('background') || elementComputedStyle.getPropertyValue('background')).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('background-color', new CSSColor(element.style.getPropertyValue('background-color') || elementComputedStyle.getPropertyValue('background-color')).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-    }
-    else {
-        element.style.setProperty('background', new CSSColor(element.style.getPropertyValue('background') || elementComputedStyle.getPropertyValue('background')).darkify().toString(), 'important');
-        element.style.setProperty('background-color', new CSSColor(element.style.getPropertyValue('background-color') || elementComputedStyle.getPropertyValue('background-color')).darkify().toString(), 'important');
-    }
-
-    if (element.style.borderColor || elementComputedStyle.borderColor || element.type) {
-        element.style.setProperty('border-color', new CSSColor(element.style.borderColor || elementComputedStyle.borderColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border', new CSSColor(element.style.border || elementComputedStyle.border).darkify().toString() || ('1px solid ' + TEXT_COLOR), 'important');
-        element.style.setProperty('border-top-color', new CSSColor(element.style.borderTopColor || elementComputedStyle.borderTopColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border-right-color', new CSSColor(element.style.borderRightColor || elementComputedStyle.borderRightColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border-bottom-color', new CSSColor(element.style.borderBottomColor || elementComputedStyle.borderBottomColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-        element.style.setProperty('border-left-color', new CSSColor(element.style.borderLeftColor || elementComputedStyle.borderLeftColor).darkify().toString() || LIGHTER_BG_COLOR, 'important');
-    }
-    */
 }
 
-
 // document.body.style.setProperty('color', TEXT_COLOR, 'important');
-
 // Set a darker body background
 // Determine if the body background is an image or not
 // window.getComputedStyle(document.body, null).getPropertyValue('background-image') != 'none'

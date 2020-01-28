@@ -44,7 +44,7 @@ img:hover {
     filter: brightness(100%) !important;
 }
 
-/* Github */
-.Box {
+.Box,  /* Github */
+.middle, .s-tag /* StackOverflow */ {
     background-color: rgb(30, 34, 39) !important;
 }
